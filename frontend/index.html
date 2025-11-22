@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Interview Practice Agent</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: #667eea;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #4a5568;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    select:hover {
+      border-color: #667eea;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .chat-box {
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 15px;
+      padding: 20px;
+      min-height: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .chat-box:empty::before {
+      content: "Interview conversation will appear here...";
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .message.interviewer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      margin-right: 20%;
+    }
+
+    .message.candidate {
+      background: #e6fffa;
+      color: #234e52;
+      margin-left: 20%;
+      border: 2px solid #81e6d9;
+    }
+
+    .message.system {
+      background: #edf2f7;
+      color: #2d3748;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .message-label {
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      opacity: 0.9;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      resize: vertical;
+      transition: all 0.3s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 150px;
+      padding: 15px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #startBtn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    #startBtn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+    }
+
+    #nextBtn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(72, 187, 120, 0.4);
+    }
+
+    #feedbackBtn {
+      background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+      color: white;
+    }
+
+    #feedbackBtn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(237, 137, 54, 0.4);
+    }
+
+    #voiceInputBtn {
+      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+      color: white;
+      min-width: 140px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+
+    #voiceInputBtn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(66, 153, 225, 0.4);
+    }
+
+    button:disabled {
+      background: #cbd5e0;
+      color: #718096;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .feedback-box {
+      background: #fffaf0;
+      border: 2px solid #fbd38d;
+      border-radius: 15px;
+      padding: 20px;
+      min-height: 150px;
+      margin-top: 10px;
+    }
+
+    .feedback-box:empty::before {
+      content: "Feedback will appear here after the interview...";
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    #voiceStatus {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      background: #f7fafc;
+      color: #4a5568;
+      margin-left: 10px;
+    }
+
+    #voiceStatus.listening {
+      background: #c6f6d5;
+      color: #22543d;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      button {
+        min-width: 100%;
+      }
+
+      .message.interviewer {
+        margin-right: 10%;
+      }
+
+      .message.candidate {
+        margin-left: 10%;
+      }
+    }
+
+    /* Scrollbar styling */
+    .chat-box::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+      background: #edf2f7;
+      border-radius: 10px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 10px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb:hover {
+      background: #a0aec0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Job Interview Practice Agent</h1>
+
+    <!-- Role selection -->
+    <div class="section">
+      <label for="roleSelect">Select role for mock interview:</label>
+      <select id="roleSelect">
+        <option value="software engineer">Software Engineer</option>
+        <option value="sales associate">Sales Associate</option>
+        <option value="retail associate">Retail Associate</option>
+      </select>
+    </div>
+
+    <!-- Chat / conversation area -->
+    <div class="section">
+      <h2>💬 Conversation</h2>
+      <div id="chatBox" class="chat-box"></div>
+    </div>
+
+    <!-- Answer input -->
+    <div class="section">
+      <label for="answerInput">Your answer:</label>
+      <textarea id="answerInput" rows="3" placeholder="Type your answer here or use voice..."></textarea>
+      <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+        <button id="voiceInputBtn">🎤 Speak Answer</button>
+        <small id="voiceStatus"></small>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="section buttons">
+      <button id="startBtn">Start Interview</button>
+      <button id="nextBtn" disabled>Send Answer & Next</button>
+      <button id="feedbackBtn" disabled>Get Feedback</button>
+    </div>
+
+    <!-- Feedback area -->
+    <div class="section">
+      <h2>📊 Feedback</h2>
+      <div id="feedbackBox" class="feedback-box"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://localhost:8000";
+
+    const roleSelect = document.getElementById('roleSelect');
+    const chatBox = document.getElementById('chatBox');
+    const answerInput = document.getElementById('answerInput');
+    const voiceInputBtn = document.getElementById('voiceInputBtn');
+    const voiceStatus = document.getElementById('voiceStatus');
+    const startBtn = document.getElementById('startBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const feedbackBtn = document.getElementById('feedbackBtn');
+    const feedbackBox = document.getElementById('feedbackBox');
+
+    let currentRole = "software engineer";
+    let currentQuestionIndex = 0;
+    let allAnswers = [];
+    let waitingForFollowUp = false;      // false = expecting answer to main question
+    let isLastCurrentQuestion = false;   // is current main question the last one?
+
+    // Utility: add message
+    function addMessage(type, text) {
+      const message = document.createElement('div');
+      message.classList.add('message');
+
+      if (type === 'interviewer') {
+        message.classList.add('interviewer');
+      } else if (type === 'candidate') {
+        message.classList.add('candidate');
+      } else if (type === 'system') {
+        message.classList.add('system');
+      }
+
+      let label = '';
+      if (type === 'interviewer') label = 'Interviewer';
+      else if (type === 'candidate') label = 'You';
+      else label = 'System';
+
+      message.innerHTML = `
+        <div class="message-label">${label}</div>
+        <div>${text}</div>
+      `;
+      chatBox.appendChild(message);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Text-to-speech for interviewer messages
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Start interview: get first main question
+    startBtn.addEventListener('click', async () => {
+      currentRole = roleSelect.value;
+      currentQuestionIndex = 0;
+      allAnswers = [];
+      waitingForFollowUp = false;
+      isLastCurrentQuestion = false;
+
+      chatBox.innerHTML = '';
+      feedbackBox.innerHTML = '';
+      answerInput.value = '';
+
+      addMessage('system', `Starting mock interview for role: ${currentRole}`);
+
+      try {
+        const body = {
+          role: currentRole,
+          question_index: currentQuestionIndex,
+          answer: ""
+        };
+
+        const res = await fetch(`${API_BASE}/interview/turn`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        addMessage('interviewer', data.next_question);
+        speakText(data.next_question);
+
+        isLastCurrentQuestion = data.is_last_question;
+        nextBtn.disabled = false;
+        feedbackBtn.disabled = true;
+      } catch (err) {
+        console.error(err);
+        addMessage('system', "Error starting interview. Check if backend is running.");
+      }
+    });
+
+    // Send answer and either get follow-up, or go to next main question
+    nextBtn.addEventListener('click', async () => {
+      const userAnswer = answerInput.value.trim();
+      if (!userAnswer) {
+        alert("Please type or speak your answer before proceeding.");
+        return;
+      }
+
+      addMessage('candidate', userAnswer);
+      answerInput.value = "";
+
+      try {
+        if (!waitingForFollowUp) {
+          // Answer to main question -> get follow-up
+          allAnswers.push(userAnswer);
+
+          const body = {
+            role: currentRole,
+            question_index: currentQuestionIndex,
+            answer: userAnswer
+          };
+
+          const res = await fetch(`${API_BASE}/interview/followup`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+          });
+
+          const data = await res.json();
+
+          addMessage('interviewer', data.follow_up_question);
+          speakText(data.follow_up_question);
+
+          waitingForFollowUp = true;
+        } else {
+          // Answer to follow-up -> go to next main question or finish
+          waitingForFollowUp = false;
+
+          if (isLastCurrentQuestion) {
+            addMessage('system', "This was the last question for this mock interview.");
+            nextBtn.disabled = true;
+            feedbackBtn.disabled = false;
+            return;
+          }
+
+          currentQuestionIndex += 1;
+
+          const body = {
+            role: currentRole,
+            question_index: currentQuestionIndex,
+            answer: userAnswer
+          };
+
+          const res = await fetch(`${API_BASE}/interview/turn`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+          });
+
+          const data = await res.json();
+
+          addMessage('interviewer', data.next_question);
+          speakText(data.next_question);
+
+          isLastCurrentQuestion = data.is_last_question;
+        }
+      } catch (err) {
+        console.error(err);
+        addMessage('system', "Error during interview. Check if backend is running.");
+      }
+    });
+
+    // Get feedback
+    feedbackBtn.addEventListener('click', async () => {
+      feedbackBox.innerHTML = "";
+      addMessage('system', "Generating feedback based on your answers...");
+
+      try {
+        const body = {
+          role: currentRole,
+          all_answers: allAnswers
+        };
+
+        const res = await fetch(`${API_BASE}/interview/feedback`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        const feedbackParts = [
+          `<strong>Communication Feedback:</strong> ${data.communication_feedback}`,
+          `<strong>Technical / Role Feedback:</strong> ${data.technical_feedback}`,
+          `<strong>Overall Summary:</strong> ${data.overall_summary}`
+        ];
+
+        feedbackParts.forEach(txt => {
+          const p = document.createElement('p');
+          p.innerHTML = txt;
+          feedbackBox.appendChild(p);
+        });
+      } catch (err) {
+        console.error(err);
+        const p = document.createElement('p');
+        p.textContent = "Error generating feedback. Check if backend is running.";
+        feedbackBox.appendChild(p);
+      }
+    });
+
+    // Voice input using Web Speech API
+    let recognition = null;
+    let recognizing = false;
+
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        recognizing = true;
+        voiceStatus.textContent = "Listening... speak now";
+        voiceStatus.classList.add("listening");
+      };
+
+      recognition.onend = () => {
+        recognizing = false;
+        voiceStatus.textContent = "";
+        voiceStatus.classList.remove("listening");
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        answerInput.value = transcript;
+      };
+
+      recognition.onerror = (event) => {
+        recognizing = false;
+        voiceStatus.textContent = "Error capturing voice. Try again.";
+        voiceStatus.classList.remove("listening");
+        console.error(event);
+      };
+    } else {
+      voiceStatus.textContent = "Voice input not supported in this browser.";
+    }
+
+    voiceInputBtn.addEventListener('click', () => {
+      if (!recognition) {
+        alert("Voice input is not supported in this browser.");
+        return;
+      }
+      if (recognizing) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+  </script>
+</body>
+</html>
