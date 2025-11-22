@@ -82,20 +82,43 @@ There is no external database; everything is in memory for simplicity, as the as
 
 ---
 
-## 3. How to run the project
+---
 
-### 3.1 Backend (FastAPI)
+## Conversational & Agentic Behaviour
 
-From the project root:
+The interview agent is designed to behave like a realistic human interviewer rather than a static chatbot. It adapts its flow based on user responses and maintains control of the interview process.
 
-```bash
-cd backend
-python -m venv venv   # if not already created
-# Windows:
-venv\Scripts\activate
-# macOS / Linux:
-# source venv/bin/activate
+### Adaptability Scenarios Tested
 
-pip install -r requirements.txt
+1. Confused User
+   Example: User answers "I don’t know" or "I am not sure"
+   Agent behaviour: Provides guiding follow-up questions such as
+   "Can you share any situation where you faced difficulty?" or requests clarity rather than breaking the flow.
 
-uvicorn main:app --reload --port 8000
+2. Efficient User
+   Example: Gives strong and structured answer immediately
+   Agent behaviour: Moves quickly to next meaningful question without unnecessary probing.
+
+3. Chatty / Off-topic User
+   Example: Irrelevant answers such as personal stories or jokes
+   Agent behaviour: Responds with structured follow-up like
+   "Can we focus on the technical part and return to the question?"
+
+4. Edge-Case User
+   Example: Provides invalid inputs, profanity, or nonsense text
+   Agent behaviour: Redirects politely:
+   "I didn’t fully understand that. Could you please rephrase your answer?"
+
+This ensures the agent demonstrates intelligence beyond simple scripted question flow.
+
+## Design Reasoning & Technical Decisions
+
+- The system uses FastAPI to keep the backend lightweight, fast and easy to document for testing.
+- Follow-up logic is rule-based instead of ML to maintain transparency and deterministic behaviour required in interview training apps.
+- Stateless backend was selected to minimize complexity and avoid unnecessary database overhead for short conversation sessions.
+- Web Speech API is used for voice to enable zero-cost real-time voice interaction without needing external speech services.
+- Separating endpoints for main questions and follow-ups improves the realism of the interview flow and avoids robotic behavior.
+
+These decisions reflect a balance between simplicity, practicality and agent realism.
+
+---
