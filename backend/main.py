@@ -50,10 +50,13 @@ def interview_turn(req: InterviewTurnRequest):
 @app.post("/interview/followup")
 def interview_followup(req: InterviewTurnRequest):
     """
-    Generate a follow-up question based on the user's answer.
+    Generate a follow-up question based on:
+    - which main question was asked (question_index)
+    - the user's answer
     """
-    follow = generate_follow_up(req.answer)
+    follow = generate_follow_up(req.question_index, req.answer)
     return {"follow_up_question": follow}
+
 
 
 @app.post("/interview/feedback", response_model=FeedbackResponse)

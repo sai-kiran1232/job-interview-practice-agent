@@ -61,17 +61,42 @@ def get_next_question(role: str, q_index: int) -> Tuple[str, bool]:
     return questions[q_index], is_last
 
 
-def generate_follow_up(answer: str) -> str:
+def generate_follow_up(question_index: int, answer: str) -> str:
     """
-    Very simple follow-up generator based on length of answer.
-    This makes the agent feel more like a real interviewer.
+    Generate a follow-up question based on:
+    - which main question we are on (question_index)
+    - how detailed the answer is
     """
-    if not answer or len(answer.split()) < 5:
+
+    word_count = len(answer.split()) if answer else 0
+
+    # Very short / empty answers: generic "please explain more"
+    if word_count < 5:
         return "Could you please elaborate a bit more and give a specific example?"
-    if len(answer.split()) < 20:
+
+    # Now choose follow-up based on which main question this was
+    if question_index == 0:
+        # Q0: challenging technical problem
+        return "What impact did this solution have on the system or the team? Any measurable results?"
+
+    elif question_index == 1:
+        # Q1: programming languages and technologies
+        return "Can you share a project where you used these technologies, and why you chose them?"
+
+    elif question_index == 2:
+        # Q2: team project
+        return "What was your specific contribution in that team, and how did you handle any disagreements?"
+
+    elif question_index == 3:
+        # Q3: keeping updated with technologies
+        return "Can you give a recent example of a new technology you learned and how you applied it?"
+
+    # Fallback for any future questions / other roles
+    if word_count < 20:
         return "That sounds interesting. Can you walk me through the situation step by step?"
     else:
-        return "Thanks for the detailed answer. What would you do differently if you faced this situation again?"
+        return "Thanks for the detailed answer. Is there anything you would do differently next time?"
+
 
 def generate_feedback(role: str, all_answers: List[str]) -> Dict[str, str]:
     """
