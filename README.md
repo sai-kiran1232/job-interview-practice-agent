@@ -99,7 +99,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 
 uvicorn main:app --reload --port 8000
-
+```
 ---
 
 ## Conversational & Agentic Behaviour
@@ -141,3 +141,4 @@ This ensures the agent demonstrates intelligence beyond simple scripted question
 
 These decisions reflect a balance between simplicity, practicality and agent realism.
 
+---
