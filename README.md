@@ -82,6 +82,24 @@ There is no external database; everything is in memory for simplicity, as the as
 
 ---
 
+## 3. How to run the project
+
+### 3.1 Backend (FastAPI)
+
+From the project root:
+
+```bash
+cd backend
+python -m venv venv   # if not already created
+# Windows:
+venv\Scripts\activate
+# macOS / Linux:
+# source venv/bin/activate
+
+pip install -r requirements.txt
+
+uvicorn main:app --reload --port 8000
+
 ---
 
 ## Conversational & Agentic Behaviour
@@ -111,6 +129,8 @@ The interview agent is designed to behave like a realistic human interviewer rat
 
 This ensures the agent demonstrates intelligence beyond simple scripted question flow.
 
+---
+
 ## Design Reasoning & Technical Decisions
 
 - The system uses FastAPI to keep the backend lightweight, fast and easy to document for testing.
@@ -121,4 +141,3 @@ This ensures the agent demonstrates intelligence beyond simple scripted question
 
 These decisions reflect a balance between simplicity, practicality and agent realism.
 
----
